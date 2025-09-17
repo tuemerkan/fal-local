@@ -1,6 +1,7 @@
 'use client'
 
 import { useGeneratedImages } from "@/hooks/use-generated-images"
+import { useImageActions } from "@/hooks/use-image-actions"
 import { Download, ArrowLeftRight, Eye, Trash2 } from "lucide-react"
 import { ImageViewerModal } from "@/components/image-viewer-modal"
 import { VideoViewerModal } from "@/components/video-viewer-modal"
@@ -14,6 +15,7 @@ import { useModel } from "@/contexts/model-context"
 
 export default function AppPage() {
   const { images, loading, error, refresh } = useGeneratedImages()
+  const { deleteImage } = useImageActions()
   const { hasImageUrlFields, getImageUrlFieldName, pasteImageUrl, setHighlightedField } = useModel()
   const [selectedImage, setSelectedImage] = useState<Generation | null>(null)
   const [isViewerOpen, setIsViewerOpen] = useState(false)
@@ -192,21 +194,10 @@ export default function AppPage() {
 
   const handleDelete = async (imageId: string) => {
     try {
-      const response = await fetch('/api/generated-images/delete', {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ imageId }),
-      })
-
-      if (response.ok) {
-        refresh() // Refresh image list
-      } else {
-        // Error deleting image
-      }
+      await deleteImage(imageId)
+      // The useImageActions hook will automatically trigger events to refresh the image list
     } catch (error) {
-      // Error handling for delete exception
+      console.error('Error deleting image:', error)
     }
   }
 
