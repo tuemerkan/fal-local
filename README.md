@@ -1,3 +1,5 @@
+<img src="public/logo.svg" alt="Logo" width="32" height="32" style="filter: brightness(0) saturate(100%) invert(20%) sepia(65%) saturate(3200%) hue-rotate(249deg) brightness(90%) contrast(105%);" />
+
 # fal-local
 
 A clean, modern interface for generating images and videos with FAL AI models. Built for privacy and local-first workflow - no accounts, no databases.
