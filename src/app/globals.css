@@ -1,0 +1,703 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+:root {
+  --radius: 0.625rem;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.13 0.028 261.692);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.13 0.028 261.692);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.13 0.028 261.692);
+  --primary: oklch(0.21 0.034 264.665);
+  --primary-foreground: oklch(0.985 0.002 247.839);
+  --secondary: oklch(0.967 0.003 264.542);
+  --secondary-foreground: oklch(0.21 0.034 264.665);
+  --muted: oklch(0.967 0.003 264.542);
+  --muted-foreground: oklch(0.551 0.027 264.364);
+  --accent: oklch(0.967 0.003 264.542);
+  --accent-foreground: oklch(0.21 0.034 264.665);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.928 0.006 264.531);
+  --input: oklch(0.928 0.006 264.531);
+  --ring: oklch(0.707 0.022 261.325);
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --sidebar: oklch(0.985 0.002 247.839);
+  --sidebar-foreground: oklch(0.13 0.028 261.692);
+  --sidebar-primary: oklch(0.21 0.034 264.665);
+  --sidebar-primary-foreground: oklch(0.985 0.002 247.839);
+  --sidebar-accent: oklch(0.967 0.003 264.542);
+  --sidebar-accent-foreground: oklch(0.21 0.034 264.665);
+  --sidebar-border: oklch(0.928 0.006 264.531);
+  --sidebar-ring: oklch(0.707 0.022 261.325);
+}
+
+.dark {
+  --background: oklch(0.13 0.028 261.692);
+  --foreground: oklch(0.985 0.002 247.839);
+  --card: oklch(0.21 0.034 264.665);
+  --card-foreground: oklch(0.985 0.002 247.839);
+  --popover: oklch(0.21 0.034 264.665);
+  --popover-foreground: oklch(0.985 0.002 247.839);
+  --primary: oklch(0.928 0.006 264.531);
+  --primary-foreground: oklch(0.21 0.034 264.665);
+  --secondary: oklch(0.278 0.033 256.848);
+  --secondary-foreground: oklch(0.985 0.002 247.839);
+  --muted: oklch(0.278 0.033 256.848);
+  --muted-foreground: oklch(0.707 0.022 261.325);
+  --accent: oklch(0.278 0.033 256.848);
+  --accent-foreground: oklch(0.985 0.002 247.839);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.551 0.027 264.364);
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: oklch(0.21 0.034 264.665);
+  --sidebar-foreground: oklch(0.985 0.002 247.839);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0.002 247.839);
+  --sidebar-accent: oklch(0.278 0.033 256.848);
+  --sidebar-accent-foreground: oklch(0.985 0.002 247.839);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.551 0.027 264.364);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply text-foreground;
+    background: var(--background);
+  }
+  
+  /* Make components transparent to show gradient */
+  .bg-background {
+    background: transparent !important;
+  }
+  
+  /* Make search results dropdown solid, not transparent */
+  .bg-background.border.rounded-md.shadow-lg {
+    background: var(--background) !important;
+  }
+  
+  .bg-card {
+    background: rgba(255, 255, 255, 0.8) !important;
+  }
+  
+  .dark .bg-card {
+    background: rgba(26, 24, 32, 0.8) !important;
+  }
+  
+  .bg-popover {
+    background: rgba(255, 255, 255, 0.95) !important;
+  }
+  
+  .dark .bg-popover {
+    background: rgba(26, 24, 32, 0.95) !important;
+  }
+  
+  .bg-muted {
+    background: rgba(248, 244, 255, 0.6) !important;
+  }
+  
+  .dark .bg-muted {
+    background: rgba(26, 24, 32, 0.6) !important;
+  }
+  
+  .bg-secondary {
+    background: rgba(248, 244, 255, 0.7) !important;
+  }
+  
+  .dark .bg-secondary {
+    background: rgba(26, 24, 32, 0.7) !important;
+  }
+  
+  /* Make main content areas transparent */
+  .flex-1 {
+    background: transparent !important;
+  }
+  
+  /* Sidebar inset transparent */
+  [data-sidebar="inset"] {
+    background: transparent !important;
+  }
+  
+  /* Make buttons semi-transparent */
+  .bg-primary {
+    background: rgba(139, 92, 246, 0.9) !important;
+  }
+  
+  .dark .bg-primary {
+    background: rgba(139, 92, 246, 0.9) !important;
+  }
+  
+  /* Switch component fixes - target only switch elements specifically */
+  button[role="switch"][data-state="checked"],
+  .peer[data-state="checked"] {
+    background: rgba(139, 92, 246, 1) !important;
+  }
+  
+  button[role="switch"][data-state="unchecked"],
+  .peer[data-state="unchecked"] {
+    background: rgba(0, 0, 0, 0.2) !important;
+  }
+  
+  .dark button[role="switch"][data-state="unchecked"],
+  .dark .peer[data-state="unchecked"] {
+    background: rgba(255, 255, 255, 0.2) !important;
+  }
+  
+  /* Switch thumbs - be very specific */
+  button[role="switch"] > span,
+  .peer > span {
+    background: white !important;
+  }
+  
+  .dark button[role="switch"] > span,
+  .dark .peer > span {
+    background: rgba(26, 24, 32, 1) !important;
+  }
+  
+  /* Drawer and sheet backgrounds */
+  [data-vaul-drawer] {
+    background: rgba(255, 255, 255, 0.95) !important;
+  }
+  
+  .dark [data-vaul-drawer] {
+    background: rgba(26, 24, 32, 0.95) !important;
+  }
+  
+  /* Input backgrounds */
+  input, textarea, select {
+    background: rgba(255, 255, 255, 0.9) !important;
+  }
+  
+  .dark input, .dark textarea, .dark select {
+    background: rgba(26, 24, 32, 0.9) !important;
+  }
+  
+  /* Make common shadcn components transparent/semi-transparent */
+  .bg-white {
+    background: rgba(255, 255, 255, 0.9) !important;
+  }
+  
+  .dark .bg-white {
+    background: rgba(26, 24, 32, 0.9) !important;
+  }
+  
+  .bg-slate-50, .bg-gray-50 {
+    background: rgba(248, 244, 255, 0.6) !important;
+  }
+  
+  .dark .bg-slate-50, .dark .bg-gray-50 {
+    background: rgba(26, 24, 32, 0.6) !important;
+  }
+  
+  .bg-slate-100, .bg-gray-100 {
+    background: rgba(248, 244, 255, 0.7) !important;
+  }
+  
+  .dark .bg-slate-100, .dark .bg-gray-100 {
+    background: rgba(26, 24, 32, 0.7) !important;
+  }
+  
+  /* Dialog and modal backgrounds */
+  [role="dialog"], .fixed.inset-0 {
+    background: rgba(248, 244, 255, 0.95) !important;
+  }
+  
+  .dark [role="dialog"], .dark .fixed.inset-0 {
+    background: rgba(26, 24, 32, 0.95) !important;
+  }
+  
+  /* Visible light purple gradient for light mode */
+  body {
+    background: linear-gradient(
+      135deg,
+      #f8f4ff 0%,
+      #f5f1ff 25%,
+      #ffffff 50%,
+      #f5f1ff 75%,
+      #f8f4ff 100%
+    ) !important;
+    background-attachment: fixed;
+    min-height: 100vh;
+  }
+  
+  /* Subtle dark gradient with minimal purple hints */
+  .dark body {
+    background: linear-gradient(
+      135deg,
+      #1a1820 0%,
+      #171519 25%,
+      #141216 50%,
+      #111013 75%,
+      #1a1820 100%
+    ) !important;
+    background-attachment: fixed;
+    min-height: 100vh;
+  }
+  
+  /* Apply visible gradient to sidebar in light mode */
+  aside {
+    background: linear-gradient(
+      180deg,
+      #f8f4ff 0%,
+      #f5f1ff 25%,
+      #ffffff 50%,
+      #f5f1ff 75%,
+      #f8f4ff 100%
+    ) !important;
+  }
+  
+  /* Apply subtle gradient to sidebar in dark mode */
+  .dark aside {
+    background: linear-gradient(
+      180deg,
+      #1a1820 0%,
+      #171519 25%,
+      #141216 50%,
+      #111013 75%,
+      #1a1820 100%
+    ) !important;
+  }
+  
+  /* Remove solid background overrides - now handled above with transparency */
+  
+  /* Apply transparent gradient to topbar - light mode */
+  header, .border-b {
+    background: rgba(248, 244, 255, 0.8) !important;
+    backdrop-filter: blur(10px);
+  }
+  
+  /* Apply transparent gradient to topbar - dark mode */
+  .dark header, .dark .border-b {
+    background: rgba(26, 24, 32, 0.8) !important;
+    backdrop-filter: blur(10px);
+  }
+  
+  /* Skeleton component visibility fix - ensure it's always visible */
+  [data-slot="skeleton"] {
+    background: rgba(156, 163, 175, 0.3) !important;
+  }
+  
+  .dark [data-slot="skeleton"] {
+    background: rgba(156, 163, 175, 0.2) !important;
+  }
+  
+  /* Make sidebar text colors more subtle */
+  .dark aside nav button {
+    color: rgba(156, 163, 175, 0.9) !important; /* Subtle gray for inactive tabs */
+  }
+  
+  .dark aside nav button:hover {
+    color: rgba(209, 213, 219, 0.95) !important; /* Slightly brighter on hover */
+  }
+  
+  .dark aside nav button.bg-gray-800 {
+    color: rgba(229, 231, 235, 0.95) !important; /* More subtle active state */
+  }
+  
+  .dark aside h1 {
+    color: rgba(229, 231, 235, 0.9) !important; /* Subtle logo text */
+  }
+  
+  .dark aside .text-muted-foreground {
+    color: rgba(107, 114, 128, 0.8) !important; /* Very subtle section headers */
+  }
+}
+
+/* Custom scrollbar styles */
+.scrollbar-thin {
+  /* Firefox */
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+  transition: scrollbar-color 0.3s ease;
+}
+
+.scrollbar-thin:hover {
+  scrollbar-color: rgba(156, 163, 175, 0.3) transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 1px;
+  height: 1px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background-color: transparent;
+  border-radius: 0px;
+  transition: background-color 0.3s ease;
+  border: none;
+}
+
+.scrollbar-thin:hover::-webkit-scrollbar-thumb {
+  background-color: rgba(156, 163, 175, 0.2);
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(156, 163, 175, 0.4);
+}
+
+.scrollbar-visible {
+  scrollbar-color: rgba(156, 163, 175, 0.2) transparent !important;
+}
+
+.scrollbar-visible::-webkit-scrollbar-thumb {
+  background-color: rgba(156, 163, 175, 0.2) !important;
+}
+
+/* iOS Safari viewport fixes */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  html {
+    /* Ensure the document takes up the full viewport including safe areas */
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  
+  body {
+    /* Prevent iOS Safari from bouncing when scrolling past content */
+    overscroll-behavior-y: none;
+    /* Ensure minimum height accounts for safe area */
+    min-height: 100vh;
+    min-height: 100dvh; /* Dynamic viewport height for newer browsers */
+  }
+}
+
+/* Mobile chat interface fixed positioning */
+@media (max-width: 767px) {
+  /* Ensure fixed chat interface stays above all mobile browser UI */
+  .mobile-chat-fixed {
+    position: fixed !important;
+    bottom: calc(20px + env(safe-area-inset-bottom, 20px)) !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: calc(100% - 24px) !important;
+    max-width: none !important;
+    z-index: 9999 !important;
+    /* Ensure it stays above Safari's bottom bar */
+    -webkit-transform: translateX(-50%) !important;
+    will-change: bottom, transform;
+  }
+  
+  /* Ensure proper spacing when keyboard appears on iOS */
+  @supports (-webkit-touch-callout: none) {
+    .mobile-chat-fixed {
+      /* iOS Safari specific positioning */
+      bottom: calc(20px + env(safe-area-inset-bottom, 60px)) !important;
+    }
+    
+    .mobile-chat-fixed:focus-within {
+      /* When input is focused, move further up to avoid keyboard */
+      bottom: calc(40px + env(safe-area-inset-bottom, 80px)) !important;
+      transition: bottom 0.3s ease-in-out;
+    }
+  }
+
+  /* Mobile drawer input focus improvements */
+  [data-vaul-drawer-direction="bottom"] {
+    /* Ensure smooth scrolling behavior in drawers */
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    
+    /* Prevent content from being hidden behind virtual keyboard */
+    position: fixed !important;
+    z-index: 50;
+    
+    /* Ensure proper positioning when keyboard appears */
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
+
+  /* Improve input focus behavior on mobile */
+  input:focus,
+  textarea:focus,
+  [role="textbox"]:focus {
+    /* Prevent iOS zoom but allow scrolling */
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    
+    /* Ensure focused inputs are accessible */
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Specific improvements for drawer content scrolling */
+  .drawer-scroll-container {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    
+    /* Ensure proper height handling when keyboard appears */
+    height: 100%;
+    max-height: 100%;
+    overflow-y: auto;
+    
+    /* Prevent content jump when keyboard appears */
+    contain: layout style;
+  }
+
+  /* Prevent empty overlays when keyboard opens */
+  [data-vaul-drawer-direction="bottom"]:focus-within {
+    /* Maintain visibility when inputs are focused */
+    visibility: visible !important;
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+    
+    /* Ensure smooth transitions */
+    transition: height 0.3s ease-in-out, max-height 0.3s ease-in-out;
+  }
+
+  /* Handle visual viewport changes more gracefully */
+  @supports (height: 100dvh) {
+    [data-vaul-drawer-direction="bottom"] {
+      /* Use dynamic viewport height when available */
+      max-height: min(90dvh, 90vh);
+    }
+  }
+}
+
+@layer utilities {
+  .line-clamp-1 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+  }
+  
+  .line-clamp-2 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+  
+  .line-clamp-3 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+  }
+
+  /* Seamless scrollbar styles - desktop only */
+  @media (min-width: 768px) {
+    .scrollbar-seamless {
+      scrollbar-width: thin;
+      scrollbar-color: transparent transparent;
+    }
+    
+    .scrollbar-seamless::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    .scrollbar-seamless::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    
+    .scrollbar-seamless::-webkit-scrollbar-thumb {
+      background-color: rgba(0, 0, 0, 0.1);
+      border-radius: 3px;
+      transition: background-color 0.2s ease;
+    }
+    
+    .scrollbar-seamless::-webkit-scrollbar-thumb:hover {
+      background-color: rgba(0, 0, 0, 0.2);
+    }
+    
+    .dark .scrollbar-seamless::-webkit-scrollbar-thumb {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    .dark .scrollbar-seamless::-webkit-scrollbar-thumb:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+  }
+  
+  /* Hide scrollbar on mobile */
+  @media (max-width: 767px) {
+    .scrollbar-seamless {
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    
+    .scrollbar-seamless::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  /* Gradient animation for CTA button */
+  @keyframes gradient-x {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+  
+  .animate-gradient-x {
+    animation: gradient-x 3s ease infinite;
+  }
+
+  /* Progress bar animation */
+  @keyframes progress {
+    0% {
+      width: 0%;
+    }
+    50% {
+      width: 75%;
+    }
+    100% {
+      width: 100%;
+    }
+  }
+
+  /* Shimmer animation */
+  @keyframes shimmer {
+    0% {
+      transform: translateX(-200%);
+    }
+    100% {
+      transform: translateX(200%);
+    }
+  }
+
+  /* Scroll animation for image carousel */
+  @keyframes scroll {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+  
+  .animate-scroll {
+    animation: scroll 20s linear infinite;
+  }
+
+  /* Laurel badge styles */
+  div.laurel img.laurel-img {
+    width: 185px;
+  }
+  
+  div.laurel {
+    margin-left: 21px;
+    display: table !important;
+    position: relative;
+    filter: invert(1);
+    margin-bottom: 14px;
+  }
+  
+  .laurel-text {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    top: 12px;
+    color: #000;
+    font-size: 13px;
+    font-weight: bold;
+    text-shadow: none;
+  }
+  
+  .laurel-stars {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    top: 29px;
+  }
+  
+  .laurel-stars img {
+    width: 13px;
+    margin-left: 2px;
+    margin-right: 2px;
+    filter: invert(1);
+    display: inline-block;
+  }
+  
+  @media (max-width: 800px) {
+    div.laurel {
+      margin: 0 auto !important;
+    }
+  }
+}
+
+
+
+/* Purple logo styling for both light and dark modes */
+.logo-purple {
+  filter: brightness(0) saturate(100%) invert(20%) sepia(65%) saturate(3200%) hue-rotate(249deg) brightness(90%) contrast(105%);
+}
+
+.dark .logo-purple {
+  filter: brightness(0) saturate(100%) invert(45%) sepia(25%) saturate(2800%) hue-rotate(244deg) brightness(85%) contrast(100%);
+}
+
+/* Logo spinning animation: spin once in 0.5s, stop for 0.5s, loop */
+@keyframes logoSpinStop {
+  0% { transform: rotate(0deg); }
+  50% { transform: rotate(360deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.logo-spinning {
+  animation: logoSpinStop 1s linear infinite;
+}
