@@ -10,6 +10,7 @@ import { useModel } from "@/contexts/model-context"
 
 interface ImageViewerModalProps {
   image: Generation | null
+  imageIndex?: number
   open: boolean
   onOpenChange: (open: boolean) => void
   onDelete?: (imageId: string) => void
@@ -17,6 +18,7 @@ interface ImageViewerModalProps {
 
 export function ImageViewerModal({ 
   image, 
+  imageIndex = 0,
   open, 
   onOpenChange,
   onDelete 
@@ -24,15 +26,15 @@ export function ImageViewerModal({
   const { hasImageUrlFields, pasteImageUrl, setHighlightedField, currentModel } = useModel()
 
   // Helper functions to extract data from Generation format
-  const getImageUrl = (generation: Generation): string => {
+  const getImageUrl = (generation: Generation, index: number = 0): string => {
     // Try new structure first: result.data.images, then fall back to result.images
-    return generation.result?.data?.images?.[0]?.url || 
-           generation.result?.images?.[0]?.url || ''
+    return generation.result?.data?.images?.[index]?.url || 
+           generation.result?.images?.[index]?.url || ''
   }
   
-  const getImageDimensions = (generation: Generation): { width: number, height: number } => {
+  const getImageDimensions = (generation: Generation, index: number = 0): { width: number, height: number } => {
     // Try to get dimensions from result first, then fall back to parameters
-    const img = generation.result?.images?.[0]
+    const img = generation.result?.data?.images?.[index] || generation.result?.images?.[index]
     const resultWidth = img?.width
     const resultHeight = img?.height
     
@@ -83,8 +85,8 @@ export function ImageViewerModal({
   }
 
   const handleDownload = async () => {
-    const dimensions = getImageDimensions(image)
-    const imageUrl = getImageUrl(image)
+    const dimensions = getImageDimensions(image, imageIndex)
+    const imageUrl = getImageUrl(image, imageIndex)
     const modelName = getModelName(image)
     
     
@@ -106,7 +108,8 @@ export function ImageViewerModal({
       const url = window.URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = url
-      a.download = `generated-image-${modelName}-${image.created_at.slice(0, 10)}.jpg`
+      const suffix = imageIndex > 0 ? `-${imageIndex + 1}` : ''
+      a.download = `generated-image-${modelName}-${image.created_at.slice(0, 10)}${suffix}.jpg`
       document.body.appendChild(a)
       a.click()
       window.URL.revokeObjectURL(url)
@@ -185,8 +188,8 @@ export function ImageViewerModal({
                     variant="ghost"
                     size="sm"
                     onClick={() => {
-                      if (getImageUrl(image)) {
-                        pasteImageUrl(getImageUrl(image))
+                      if (getImageUrl(image, imageIndex)) {
+                        pasteImageUrl(getImageUrl(image, imageIndex))
                       }
                     }}
                     onMouseEnter={() => {
@@ -230,23 +233,23 @@ export function ImageViewerModal({
             </div>
 
             {/* Main image area */}
-            <div className="flex-1 flex items-center justify-center p-4 relative w-full" onClick={handleBackgroundClick}>
+            <div className="flex-1 flex items-center justify-center relative w-full overflow-hidden" onClick={handleBackgroundClick}>
               {/* Use regular img tag for base64 data URLs, Next.js Image for remote URLs */}
-              {getImageUrl(image).startsWith('data:') ? (
+              {getImageUrl(image, imageIndex).startsWith('data:') ? (
                 <img
-                  src={getImageUrl(image)}
+                  src={getImageUrl(image, imageIndex)}
                   alt={getPrompt(image)}
-                  className="max-w-full max-h-full object-contain mx-auto"
+                  className="max-w-[calc(100vw-2rem)] max-h-[calc(100vh-8rem)] object-contain"
                   style={{ objectPosition: 'center center' }}
                 />
               ) : (
                 <Image
-                  src={getImageUrl(image)}
+                  src={getImageUrl(image, imageIndex)}
                   alt={getPrompt(image)}
-                  width={getImageDimensions(image).width || 512}
-                  height={getImageDimensions(image).height || 512}
-                  className="max-w-full max-h-full object-contain mx-auto"
-                  style={{ objectPosition: 'center center' }}
+                  width={getImageDimensions(image, imageIndex).width || 512}
+                  height={getImageDimensions(image, imageIndex).height || 512}
+                  className="max-w-[calc(100vw-2rem)] max-h-[calc(100vh-8rem)] object-contain"
+                  style={{ objectPosition: 'center center', width: 'auto', height: 'auto' }}
                   priority
                 />
               )}
@@ -276,7 +279,7 @@ export function ImageViewerModal({
                   </div>
                 </div>
                 <div className="text-xs text-white/80 md:text-right flex-shrink-0">
-                  <p>{getImageDimensions(image).width} × {getImageDimensions(image).height}</p>
+                  <p>{getImageDimensions(image, imageIndex).width} × {getImageDimensions(image, imageIndex).height}</p>
                   <p className="hidden md:block">{new Date(image.created_at).toLocaleDateString('de-DE', {
                     day: '2-digit',
                     month: '2-digit', 

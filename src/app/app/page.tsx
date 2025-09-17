@@ -18,6 +18,7 @@ export default function AppPage() {
   const { deleteImage } = useImageActions()
   const { hasImageUrlFields, getImageUrlFieldName, pasteImageUrl, setHighlightedField } = useModel()
   const [selectedImage, setSelectedImage] = useState<Generation | null>(null)
+  const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0)
   const [isViewerOpen, setIsViewerOpen] = useState(false)
   const [selectedVideo, setSelectedVideo] = useState<Generation | null>(null)
   const [isVideoViewerOpen, setIsVideoViewerOpen] = useState(false)
@@ -64,12 +65,69 @@ export default function AppPage() {
               generation.result?.videos?.length)
   }
 
-  const getImageUrl = (generation: Generation): string => {
-    // Try new structure first: result.data.images
-    const imageUrl = generation.result?.data?.images?.[0]?.url || 
-                     generation.result?.images?.[0]?.url || ''
+  // Interface to represent a single renderable item (can be an image or video)
+  interface RenderableItem {
+    id: string // unique identifier for this specific image/video
+    generation: Generation // reference to the original generation
+    type: 'image' | 'video'
+    url: string
+    width?: number
+    height?: number
+    imageIndex?: number // for multi-image generations, which image this represents
+  }
+
+  // Extract all renderable items from a generation
+  const extractRenderableItems = (generation: Generation): RenderableItem[] => {
+    const items: RenderableItem[] = []
     
-    return imageUrl
+    if (isVideoGeneration(generation)) {
+      // Handle video
+      const videoUrl = generation.result?.data?.video?.url || 
+                       generation.result?.data?.videos?.[0]?.url ||
+                       generation.result?.video?.url || 
+                       generation.result?.videos?.[0]?.url || ''
+      
+      if (videoUrl) {
+        const video = generation.result?.data?.video || 
+                      generation.result?.data?.videos?.[0] ||
+                      generation.result?.video || 
+                      generation.result?.videos?.[0]
+        
+        items.push({
+          id: `${generation.id}-video-0`,
+          generation,
+          type: 'video',
+          url: videoUrl,
+          width: video?.width,
+          height: video?.height
+        })
+      }
+    } else {
+      // Handle images - extract ALL images, not just the first one
+      const images = generation.result?.data?.images || generation.result?.images || []
+      
+      images.forEach((image, index) => {
+        if (image.url) {
+          items.push({
+            id: `${generation.id}-image-${index}`,
+            generation,
+            type: 'image',
+            url: image.url,
+            width: image.width,
+            height: image.height,
+            imageIndex: index
+          })
+        }
+      })
+    }
+    
+    return items
+  }
+
+  const getImageUrl = (generation: Generation, imageIndex: number = 0): string => {
+    // Try new structure first: result.data.images
+    const images = generation.result?.data?.images || generation.result?.images || []
+    return images[imageIndex]?.url || ''
   }
 
   const getVideoUrl = (generation: Generation): string => {
@@ -88,29 +146,15 @@ export default function AppPage() {
     return contentUrl
   }
   
-  const getImageDimensions = (generation: Generation): { width: number, height: number } => {
-    // Try to get dimensions from result first, then fall back to parameters
-    if (isVideoGeneration(generation)) {
-      const video = generation.result?.video || generation.result?.videos?.[0]
-      const resultWidth = video?.width
-      const resultHeight = video?.height
-      
-      if (resultWidth && resultHeight) {
-        return { width: resultWidth, height: resultHeight }
-      }
-    } else {
-      const img = generation.result?.images?.[0]
-      const resultWidth = img?.width
-      const resultHeight = img?.height
-      
-      if (resultWidth && resultHeight) {
-        return { width: resultWidth, height: resultHeight }
-      }
+  const getItemDimensions = (item: RenderableItem): { width: number, height: number } => {
+    // Use dimensions from the specific item if available
+    if (item.width && item.height) {
+      return { width: item.width, height: item.height }
     }
     
     // Fall back to parameters (from migrated data)
-    const paramWidth = generation.parameters?.width as number
-    const paramHeight = generation.parameters?.height as number
+    const paramWidth = item.generation.parameters?.width as number
+    const paramHeight = item.generation.parameters?.height as number
     
     return { 
       width: paramWidth || 512, 
@@ -138,23 +182,23 @@ export default function AppPage() {
     return `${diffDays} days ago`
   }
 
-  const handleItemClick = (generation: Generation) => {
-    if (isVideoGeneration(generation)) {
-      setSelectedVideo(generation)
+  const handleItemClick = (item: RenderableItem) => {
+    if (item.type === 'video') {
+      setSelectedVideo(item.generation)
       setIsVideoViewerOpen(true)
     } else {
-      setSelectedImage(generation)
+      setSelectedImage(item.generation)
+      setSelectedImageIndex(item.imageIndex ?? 0)
       setIsViewerOpen(true)
     }
   }
 
-
-  const handleDownload = async (generation: Generation) => {
-    const contentUrl = getContentUrl(generation)
-    const modelName = getModelName(generation)
-    const isVideo = isVideoGeneration(generation)
+  const handleDownload = async (item: RenderableItem) => {
+    const contentUrl = item.url
+    const modelName = getModelName(item.generation)
+    const isVideo = item.type === 'video'
     
-    setDownloadingImages(prev => new Set(prev).add(generation.id))
+    setDownloadingImages(prev => new Set(prev).add(item.id))
     
     try {
       const response = await fetch(contentUrl)
@@ -164,7 +208,8 @@ export default function AppPage() {
       a.href = url
       const extension = isVideo ? 'mp4' : 'jpg'
       const prefix = isVideo ? 'generated-video' : 'generated-image'
-      a.download = `${prefix}-${modelName}-${generation.created_at.slice(0, 10)}.${extension}`
+      const suffix = item.imageIndex !== undefined ? `-${item.imageIndex + 1}` : ''
+      a.download = `${prefix}-${modelName}-${item.generation.created_at.slice(0, 10)}${suffix}.${extension}`
       document.body.appendChild(a)
       a.click()
       window.URL.revokeObjectURL(url)
@@ -174,7 +219,7 @@ export default function AppPage() {
     } finally {
       setDownloadingImages(prev => {
         const newSet = new Set(prev)
-        newSet.delete(generation.id)
+        newSet.delete(item.id)
         return newSet
       })
     }
@@ -190,9 +235,15 @@ export default function AppPage() {
   }
 
   const renderContentGrid = (imagesList: Generation[], isLoading: boolean, errorMessage: string | null, emptyMessage: string) => {
-    // Combine all images and sort by creation date (newest first)
-    const allImages = [...imagesList]
-    allImages.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+    // Extract all renderable items from generations and sort by creation date (newest first)
+    const allItems: RenderableItem[] = []
+    imagesList.forEach(generation => {
+      const items = extractRenderableItems(generation)
+      allItems.push(...items)
+    })
+    
+    // Sort by generation creation date (newest first)
+    allItems.sort((a, b) => new Date(b.generation.created_at).getTime() - new Date(a.generation.created_at).getTime())
     
     // Show skeleton if loading existing images OR if generating new ones
     if (isLoading) {
@@ -221,7 +272,7 @@ export default function AppPage() {
       )
     }
 
-    if (allImages.length === 0 && !isGenerating) {
+    if (allItems.length === 0 && !isGenerating) {
       return (
         <div className="flex items-center justify-center min-h-[40vh]">
           <div className="text-center space-y-2">
@@ -244,30 +295,29 @@ export default function AppPage() {
         {/* Show generation skeletons first */}
         {generationSkeletons}
         {/* Then show existing content (images and videos) */}
-        {allImages.map((generation) => {
-          const isDownloading = downloadingImages.has(generation.id)
-          const isVideo = isVideoGeneration(generation)
-          const contentUrl = getContentUrl(generation)
+        {allItems.map((item) => {
+          const isDownloading = downloadingImages.has(item.id)
+          const contentUrl = item.url
 
           // Skip if no content URL (corrupted generation)
           if (!contentUrl || contentUrl.trim() === '') {
             return null
           }
 
-          const dimensions = getImageDimensions(generation)
+          const dimensions = getItemDimensions(item)
           const aspectRatio = dimensions.width && dimensions.height 
             ? dimensions.width / dimensions.height 
             : 3/4 // fallback to 3:4 aspect ratio
 
           return (
             <div 
-              key={generation.id} 
+              key={item.id} 
               className="w-full group relative overflow-hidden rounded-lg cursor-pointer hover:scale-[1.02] transition-transform duration-200 flex items-center justify-center"
               style={{ aspectRatio: aspectRatio }}
-              onClick={() => handleItemClick(generation)}
+              onClick={() => handleItemClick(item)}
             >
               {/* Content - Image or Video */}
-              {isVideo ? (
+              {item.type === 'video' ? (
                 <video
                   src={contentUrl}
                   className="w-full h-full object-cover transition-all duration-300"
@@ -292,7 +342,7 @@ export default function AppPage() {
                 contentUrl.startsWith('data:') ? (
                   <img
                     src={contentUrl}
-                    alt={getPrompt(generation)}
+                    alt={getPrompt(item.generation)}
                     className="w-full h-full object-cover transition-all duration-300"
                     style={{ objectPosition: 'center center' }}
                     loading="lazy"
@@ -300,7 +350,7 @@ export default function AppPage() {
                 ) : (
                   <Image
                     src={contentUrl}
-                    alt={getPrompt(generation)}
+                    alt={getPrompt(item.generation)}
                     fill
                     className="object-cover transition-all duration-300"
                     style={{ objectPosition: 'center center' }}
@@ -313,7 +363,7 @@ export default function AppPage() {
               {/* Top action buttons */}
               <div className="absolute top-1.5 md:top-2 right-1.5 md:right-2 flex gap-1">
                 {/* First button - Use as input image URL (only for images) */}
-                {!isVideo && hasImageUrlFields() && (
+                {item.type === 'image' && hasImageUrlFields() && (
                   <Button
                     variant="ghost"
                     size="sm"
@@ -347,10 +397,10 @@ export default function AppPage() {
                     e.preventDefault()
                     e.stopPropagation()
                     e.nativeEvent?.stopImmediatePropagation()
-                    handleItemClick(generation)
+                    handleItemClick(item)
                   }}
                   className="h-7 w-7 md:h-8 md:w-8 p-0 bg-black/50 hover:bg-black/60 text-white md:opacity-0 md:group-hover:opacity-100 opacity-80 transition-all duration-200"
-                  title={isVideo ? "View video" : "View full size"}
+                  title={item.type === 'video' ? "View video" : "View full size"}
                 >
                   <Eye className="size-3 md:size-4" />
                 </Button>
@@ -364,11 +414,11 @@ export default function AppPage() {
                     e.preventDefault()
                     e.stopPropagation()
                     e.nativeEvent?.stopImmediatePropagation()
-                    handleDownload(generation)
+                    handleDownload(item)
                   }}
                   disabled={isDownloading}
                   className="h-7 w-7 md:h-8 md:w-8 p-0 bg-black/50 hover:bg-black/60 text-white md:opacity-0 md:group-hover:opacity-100 opacity-80 transition-all duration-200"
-                  title={isVideo ? "Download video" : "Download"}
+                  title={item.type === 'video' ? "Download video" : "Download"}
                 >
                   <Download className={`size-3 md:size-4 ${isDownloading ? 'animate-pulse' : ''}`} />
                 </Button>
@@ -383,21 +433,22 @@ export default function AppPage() {
                     e.preventDefault()
                     e.stopPropagation()
                     e.nativeEvent?.stopImmediatePropagation()
-                    handleDelete(generation.id)
+                    handleDelete(item.generation.id)
                   }}
                   className="h-7 w-7 md:h-8 md:w-8 p-0 bg-red-500/70 hover:bg-red-500/80 text-white opacity-0 group-hover:opacity-100 transition-all duration-200"
-                  title={isVideo ? "Delete video" : "Delete image"}
+                  title={item.type === 'video' ? "Delete video" : "Delete image"}
                 >
                   <Trash2 className="size-3 md:size-4" />
                 </Button>
               </div>
               
               {/* Video indicator overlay */}
-              {isVideo && (
+              {item.type === 'video' && (
                 <div className="absolute top-2 left-2 bg-black/50 rounded px-2 py-1 text-white text-xs font-medium">
                   VIDEO
                 </div>
               )}
+              
               
               {/* Gradient overlay for text readability */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none" />
@@ -405,10 +456,10 @@ export default function AppPage() {
               {/* Model name and time - bottom right */}
               <div className="absolute bottom-2 md:bottom-3 right-2 md:right-3 text-right pointer-events-none">
                 <p className="text-white font-medium text-xs md:text-sm drop-shadow-lg">
-                  {getModelName(generation).replace('Dynamic Model: ', '') || 'Generated'}
+                  {getModelName(item.generation).replace('Dynamic Model: ', '') || 'Generated'}
                 </p>
                 <p className="text-white/80 text-xs drop-shadow-lg">
-                  {getDaysAgo(generation.created_at)}
+                  {getDaysAgo(item.generation.created_at)}
                 </p>
               </div>
             </div>
@@ -432,6 +483,7 @@ export default function AppPage() {
       {/* Image Viewer Modal */}
       <ImageViewerModal
         image={selectedImage}
+        imageIndex={selectedImageIndex}
         open={isViewerOpen}
         onOpenChange={setIsViewerOpen}
         onDelete={handleDelete}
@@ -453,7 +505,14 @@ export default function AppPage() {
           }}
           open={isVideoViewerOpen}
           onOpenChange={setIsVideoViewerOpen}
-          onDownload={() => handleDownload(selectedVideo)}
+          onDownload={() => handleDownload({
+            id: `${selectedVideo.id}-video-0`,
+            generation: selectedVideo,
+            type: 'video',
+            url: getVideoUrl(selectedVideo),
+            width: selectedVideo.result?.video?.width || selectedVideo.result?.videos?.[0]?.width,
+            height: selectedVideo.result?.video?.height || selectedVideo.result?.videos?.[0]?.height
+          })}
         />
       )}
     </div>
