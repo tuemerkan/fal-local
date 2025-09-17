@@ -1,10 +1,10 @@
-# fal-ui
+# fal-local
 
 A clean, modern interface for generating images and videos with FAL AI models. Built for privacy and local-first workflow - no accounts, no databases.
 
-## What is fal-ui?
+## What is fal-local?
 
-fal-ui is a web application that lets you:
+fal-local is a web application that lets you:
 
 - **Generate AI images and videos** using 100+ FAL AI models
 - **Browse and experiment** with different models and parameters
@@ -48,7 +48,3 @@ pnpm dev
 - **Tailwind CSS v4** for styling
 - **shadcn/ui** + Radix UI for components
 - **FAL AI Client** for model integration
-
----
-
-Built with ♥️ for creators who value privacy

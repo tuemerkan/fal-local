@@ -50,7 +50,7 @@ interface ModelPickerProps {
 }
 
 // localStorage utilities for saving/loading last used model
-const LAST_MODEL_KEY = 'fal-ui-last-model'
+const LAST_MODEL_KEY = 'fal-local-last-model'
 
 // Helper function to extract enum values from various structures
 const getEnumValues = (input: ModelInput): string[] | null => {

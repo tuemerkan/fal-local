@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "fal-ui",
+  title: "fal-local",
   description: "AI image generation with fal.ai",
   icons: {
     icon: "/favicon.svg",
@@ -21,15 +21,15 @@ export const metadata: Metadata = {
     apple: "/favicon.svg",
   },
   openGraph: {
-    title: "fal-ui",
+    title: "fal-local",
     description: "AI image generation with fal.ai",
-    siteName: "fal-ui",
+    siteName: "fal-local",
     images: [
       {
         url: "/ogimage.png",
         width: 1200,
         height: 630,
-        alt: "fal-ui - AI image generation",
+        alt: "fal-local - AI image generation",
       },
     ],
     locale: "en_US",
@@ -37,7 +37,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "fal-ui",
+    title: "fal-local",
     description: "AI image generation with fal.ai",
     images: ["/ogimage.png"],
   },

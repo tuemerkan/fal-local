@@ -49,7 +49,7 @@ export default function AppLayout({
   children: React.ReactNode
 }) {
   return (
-    <ThemeProvider defaultTheme="system" storageKey="fal-ui-theme">
+    <ThemeProvider defaultTheme="system" storageKey="fal-local-theme">
       <AppLayoutContent>
         {children}
       </AppLayoutContent>
@@ -260,7 +260,7 @@ function AppLayoutInner({
                 height={32}
                 className={`w-8 h-8 logo-purple ${isGenerating ? 'logo-spinning' : ''}`}
               />
-              <h1 className="text-xl font-bold">fal-ui</h1>
+              <h1 className="text-xl font-bold">fal-local</h1>
             </div>
           </SidebarHeader>
           <SidebarContent className="p-4 flex-1 flex flex-col min-h-0">
@@ -282,12 +282,12 @@ function AppLayoutInner({
               <div className="flex items-center gap-2 min-w-0 flex-shrink-0">
                 <Image
                   src="/logo.svg"
-                  alt="fal-ui logo"
+                  alt="fal-local logo"
                   width={24}
                   height={24}
                   className={`w-6 h-6 logo-purple ${isGenerating ? 'logo-spinning' : ''}`}
                 />
-                <span className="font-semibold text-lg text-foreground">fal-ui</span>
+                <span className="font-semibold text-lg text-foreground">fal-local</span>
               </div>
             )}
             

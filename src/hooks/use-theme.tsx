@@ -25,7 +25,7 @@ const ThemeProviderContext = React.createContext<ThemeProviderState>(initialStat
 export function ThemeProvider({
   children,
   defaultTheme = "system",
-  storageKey = "fal-ui-theme",
+  storageKey = "fal-local-theme",
 }: ThemeProviderProps) {
   const [theme, setTheme] = React.useState<Theme>(defaultTheme)
   const [mounted, setMounted] = React.useState(false)
