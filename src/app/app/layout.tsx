@@ -218,16 +218,8 @@ function AppLayoutInner({
         // Verify what was actually saved
         const savedGenerations = LocalStorage.generations.getGenerations()
 
-        // Dispatch all events for UI components to refresh
-        window.dispatchEvent(new CustomEvent('generationAdded'))
-        window.dispatchEvent(new CustomEvent('imageGenerated', { 
-          detail: { 
-            generations: processedGenerations
-          }
-        }))
-        
-        // Also dispatch the new event name for forward compatibility
-        window.dispatchEvent(new CustomEvent('generationCompleted', { 
+        // Dispatch single event for UI components to refresh
+        window.dispatchEvent(new CustomEvent('generationAdded', { 
           detail: { 
             generations: processedGenerations
           }

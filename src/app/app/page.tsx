@@ -36,17 +36,9 @@ export default function AppPage() {
       setNumGenerating(event.detail?.numImages || 1)
     }
 
-    const handleGenerationCompleted = () => {
-      setIsGenerating(false)
-      refresh() // Refresh images to show the new generation
-    }
-
     const handleGenerationAdded = () => {
-      refresh()
-    }
-
-    const handleImageGenerated = () => {
-      refresh()
+      setIsGenerating(false)
+      // The useGeneratedImages hook will handle the data refresh via its own event listener
     }
 
     const handleGenerationEnded = () => {
@@ -54,19 +46,15 @@ export default function AppPage() {
     }
 
     window.addEventListener('generationStarted', handleGenerationStarted as EventListener)
-    window.addEventListener('generationCompleted', handleGenerationCompleted as EventListener)
     window.addEventListener('generationAdded', handleGenerationAdded as EventListener)
-    window.addEventListener('imageGenerated', handleImageGenerated as EventListener)
     window.addEventListener('generationEnded', handleGenerationEnded as EventListener)
 
     return () => {
       window.removeEventListener('generationStarted', handleGenerationStarted as EventListener)
-      window.removeEventListener('generationCompleted', handleGenerationCompleted as EventListener)
       window.removeEventListener('generationAdded', handleGenerationAdded as EventListener)
-      window.removeEventListener('imageGenerated', handleImageGenerated as EventListener)
       window.removeEventListener('generationEnded', handleGenerationEnded as EventListener)
     }
-  }, [refresh])
+  }, [])
 
   // Helper functions to extract data from Generation format
   const isVideoGeneration = (generation: Generation): boolean => {
